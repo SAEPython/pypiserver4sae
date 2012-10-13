@@ -286,6 +286,22 @@ unstable packages on different paths::
 
     gunicorn_paster paste.ini
 
+Test on SAE
+===========
+
+(SAEENV)felix~/lab/SAEENV/pypiserver$ easy_install -i http://pypiserver.sinaapp.com/simple/ an_example_pypi_project
+Searching for an-example-pypi-project
+Reading http://pypiserver.sinaapp.com/simple/an_example_pypi_project/
+Best match: an-example-pypi-project 0.0.5
+Downloading http://pypiserver.sinaapp.com/packages/an_example_pypi_project-0.0.5.zip
+Processing an_example_pypi_project-0.0.5.zip
+Running an_example_pypi_project-0.0.5/setup.py -q bdist_egg --dist-dir /tmp/easy_install-9cPbRY/an_example_pypi_project-0.0.5/egg-dist-tmp-19gZKR
+zip_safe flag not set; analyzing archive contents...
+Adding an-example-pypi-project 0.0.5 to easy-install.pth file
+
+Installed /home/felix/lab/SAEENV/lib/python2.7/site-packages/an_example_pypi_project-0.0.5-py2.7.egg
+Processing dependencies for an-example-pypi-project
+Finished processing dependencies for an-example-pypi-project
 
 
 Source

@@ -1,3 +1,4 @@
+#coding=utf-8
 import sys, os
 
 if sys.version_info >= (3, 0):
@@ -62,9 +63,11 @@ def root():
     except:
         numpkgs = 0
 
-    return """<html><head><title>Welcome to pypiserver!</title></head><body>
-<h1>Welcome to pypiserver!</h1>
+    return u"""<html><head><title>Welcome to pypiserver for SAE!</title></head><body>
+<h1>Welcome to pypiserver for SAE!</h1>
+<h1>欢迎使用pypiserver for SAE!</h1>
 <p>This is a PyPI compatible package index serving %(NUMPKGS)s packages.</p>
+<p>此为PyPI 兼容的包索引，当前提供了%(NUMPKGS)s 个包.</p>
 
 <p> To use this server with pip, run the the following command:
 <blockquote><pre>
@@ -75,10 +78,20 @@ pip install -i %(URL)ssimple/ PACKAGE [PACKAGE2...]
 <blockquote><pre>
 easy_install -i %(URL)ssimple/ PACKAGE
 </pre></blockquote></p>
+<p> 通过pip 使用该服务器，请运行命令：
+<blockquote><pre>
+pip install -i %(URL)ssimple/ PACKAGE [PACKAGE2...]
+</pre></blockquote></p>
+<p> 通过easy_install 使用该服务器，请运行命令：
+<blockquote><pre>
+easy_install -i %(URL)ssimple/ PACKAGE
+</pre></blockquote></p>
 
 <p>The complete list of all packages can be found <a href="packages/">here</a> or via the <a href="simple/">simple</a> index.</p>
+<p>完整的包列表可以在 <a href="packages/">这里</a> 找到或使用 <a href="simple/">simple</a> 索引。</p>
 
-<p>This instance is running version %(VERSION)s of the <a href="http://pypi.python.org/pypi/pypiserver">pypiserver</a> software.</p>
+<p>This instance is running version %(VERSION)s of the <a href="https://github.com/wangeek/pypiserver4sae">pypiserver4sae</a> software, forked from <a href="http://pypi.python.org/pypi/pypiserver">pypiserver</a>.</p>
+<p>此程序正在运行 %(VERSION)s 版本的 <a href="https://github.com/wangeek/pypiserver4sae">pypiserver4sae</a> ,分支自<a href="http://pypi.python.org/pypi/pypiserver">pypiserver</a>。</p>
 </body></html>
 """ % dict(URL=request.url, VERSION=__version__, NUMPKGS=numpkgs)
 
@@ -179,7 +192,9 @@ def server_static(filename):
     if not is_allowed_path(filename):
         return HTTPError(404)
 
-    return static_file(filename, root=packages.root)
+    # by Felix Get rid of static_file, use SAE storage
+    #return static_file(filename, root=packages.root)
+    return redirect(packages.url(filename))
 
 
 @app.route('/:prefix')

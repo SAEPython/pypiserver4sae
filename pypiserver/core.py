@@ -1,5 +1,7 @@
 #! /usr/bin/env python
 """minimal PyPI like server for use with pip/easy_install"""
+#for SAE storage only
+from sae import storage
 
 import os, sys, getopt, re, mimetypes
 
@@ -34,15 +36,24 @@ def is_allowed_path(path_part):
 
 class pkgset(object):
     def __init__(self, root):
-        self.root = os.path.abspath(root)
+        #use root as SAE storage domain name
+        self.root = root
+        self.storage_client = storage.Client()
+
+    def url(self,filename):
+        # return SAE storage url
+        return self.storage_client.url(self.root,filename)
 
     def listdir(self):
+        #replace with one domain solution
         res = []
-        for dirpath, dirnames, filenames in os.walk(self.root):
-            dirnames[:] = [x for x in dirnames if is_allowed_path(x)]
-            for x in filenames:
-                if is_allowed_path(x):
-                    res.append(os.path.join(self.root, dirpath, x))
+        for item in self.storage_client.list(self.root):
+            res.append(item['name'])
+        #for dirpath, dirnames, filenames in os.walk(self.root):
+        #    dirnames[:] = [x for x in dirnames if is_allowed_path(x)]
+        #    for x in filenames:
+        #        if is_allowed_path(x):
+        #            res.append(os.path.join(self.root, dirpath, x))
         return res
 
     def find_packages(self, prefix=""):
@@ -52,15 +63,18 @@ class pkgset(object):
             pkgname = guess_pkgname(x)
             if prefix and pkgname.lower() != prefix:
                 continue
-            if os.path.isfile(x):
-                files.append(x[len(self.root) + 1:])
+            #remove by Felix
+            #if os.path.isfile(x):
+            #    files.append(x[len(self.root) + 1:])
+            files.append(x)
         return files
 
     def find_prefixes(self):
         prefixes = set()
         for x in self.listdir():
-            if not os.path.isfile(x):
-                continue
+            #remove by Felix
+            #if not os.path.isfile(x):
+            #    continue
 
             pkgname = guess_pkgname(x)
             if pkgname:
@@ -69,15 +83,22 @@ class pkgset(object):
 
     def store(self, filename, data):
         assert "/" not in filename
-        dest_fn = os.path.join(self.root, filename)
-        if not os.path.exists(dest_fn):
-            dest_fh = open(dest_fn, "wb")
-
-            dest_fh.write(data)
-            dest_fh.close()
+        try:
+            o = self.storage_client.stat(self.root, name)
+            return False
+            #except storage.ObjectNotExistsError:
+        except Exception:
+            self.storage_client.put(self.root,filename,data)
             return True
+        #remove by Felix
+        #dest_fn = os.path.join(self.root, filename)
+        #if not os.path.exists(dest_fn):
+        #    dest_fh = open(dest_fn, "wb")
 
-        return False
+        #    dest_fh.write(data)
+        #    dest_fh.close()
+        #    return True
+        #return False
 
 
 def usage():
