@@ -1,15 +1,9 @@
 .. -*- mode: rst; coding: utf-8 -*-
 
 ==============================================================================
-pypiserver - minimal PyPI server for use with pip/easy_install
+pypiserver4sae - SAE based minimal PyPI server for use with pip/easy_install
 ==============================================================================
 
-
-:Authors: Ralf Schmitt <ralf@systemexit.de>
-:Version: 0.6.1
-:Date:    2012-08-07
-:Download: http://pypi.python.org/pypi/pypiserver#downloads
-:Code: https://github.com/schmir/pypiserver
 
 
 .. contents:: Table of Contents
@@ -18,9 +12,11 @@ pypiserver - minimal PyPI server for use with pip/easy_install
 
 pypiserver is a minimal PyPI compatible server. It can be used to
 serve a set of packages and eggs to easy_install or pip.
+This fork of pypiserver is for Sina App Engine platform enviroment only, and use wsgi as interface. 
+For more options, please check https://github.com/schmir/pypiserver .
 
-Installation and Usage/Quickstart
-=================================
+Installation on SAE
+====================
 pypiserver will work with python 2.5, 2.6 and 2.7. Python 3 support
 has been added with version 0.4.0.
 
@@ -34,31 +30,7 @@ Run the following commands to get your PyPI server up and running::
 
 Alternative Installation as standalone script
 =============================================
-The git repository contains a 'pypi-server-standalone.py' script,
-which is a single python file ready to be executed without any other
-dependencies.
-
-Run the following commands to download the script with wget::
-
-  wget https://raw.github.com/schmir/pypiserver/standalone/pypi-server-standalone.py
-  chmod +x pypi-server-standalone.py
-
-or with curl::
-
-  curl -O https://raw.github.com/schmir/pypiserver/standalone/pypi-server-standalone.py
-  chmod +x pypi-server-standalone.py
-
-The server can then be started with::
-
-  ./pypi-server-standalone.py
-
-Feel free to rename the script and move it into your $PATH.
-
-Running on heroku/dotcloud
-=================================
-https://github.com/dexterous/pypiserver-on-the-cloud contains
-instructions on how to run pypiserver on one of the supported cloud
-service providers.
+For more options, please check https://github.com/schmir/pypiserver .
 
 Detailed Usage
 =================================
@@ -207,120 +179,25 @@ Optional dependencies
 
 Using a different WSGI server
 =============================
-If none of the above servers matches your needs, pypiserver also
-exposes an API to get the internal WSGI app, which you can then run
-under any WSGI server you like. pypiserver.app has the following
-interface::
-
-  def app(root=None,
-	  redirect_to_fallback=True,
-	  fallback_url="http://pypi.python.org/simple")
-
-and returns the WSGI application. root is the package directory,
-redirect_to_fallback specifies wether to redirect to fallback_url when
-a package is missing.
-
-gunicorn
-----------------
-
-The following command uses gunicorn to start pypiserver::
-
-  gunicorn -w4 'pypiserver:app("/home/ralf/packages")'
-
-apache/mod_wsgi
-----------------
-In case you're using apache 2 with mod_wsgi, the following config file
-(contributed by Thomas Waldmann) can be used::
-
-  # An example pypiserver.wsgi for use with apache2 and mod_wsgi, edit as necessary.
-  #
-  # apache virtualhost configuration for mod_wsgi daemon mode:
-  #    Alias /robots.txt /srv/yoursite/htdocs/robots.txt
-  #    WSGIPassAuthorization On
-  #    WSGIScriptAlias /     /srv/yoursite/cfg/pypiserver.wsgi
-  #    WSGIDaemonProcess     pypisrv user=pypisrv group=pypisrv processes=1 threads=5 maximum-requests=500 umask=0007 display-name=wsgi-pypisrv inactivity-timeout=300
-  #    WSGIProcessGroup      pypisrv
-
-  PACKAGES = "/srv/yoursite/packages"
-  HTPASSWD = "/srv/yoursite/htpasswd"
-  import pypiserver
-  application = pypiserver.app(PACKAGES, redirect_to_fallback=True, password_file=HTPASSWD)
-
-paste/pastedeploy
-----------------------
-paste allows to run multiple WSGI applications under different URL
-paths. Therfor it's possible to serve different set of packages on
-different paths.
-
-The following example `paste.ini` could be used to serve stable and
-unstable packages on different paths::
-
-  [composite:main]
-  use = egg:Paste#urlmap
-  /unstable/ = unstable
-  / = stable
-
-  [app:stable]
-  use = egg:pypiserver#main
-  root = ~/packages/stable
-
-  [app:unstable]
-  use = egg:pypiserver#main
-  root = ~/packages/
-
-  [server:main]
-  use = egg:gunicorn#main
-  host = 0.0.0.0
-  port = 9000
-  workers = 5
-  accesslog = -
-
-.. NOTE::
-
-  You need to install some more dependencies for this to work,
-  e.g. run::
-
-    pip install paste pastedeploy gunicorn pypiserver
-
-  The server can then be started with::
-
-    gunicorn_paster paste.ini
+For more options, please check https://github.com/schmir/pypiserver .
 
 Test on SAE
 ===========
 
-(SAEENV)felix~/lab/SAEENV/pypiserver$ easy_install -i http://pypiserver.sinaapp.com/simple/ an_example_pypi_project
-Searching for an-example-pypi-project
-Reading http://pypiserver.sinaapp.com/simple/an_example_pypi_project/
-Best match: an-example-pypi-project 0.0.5
-Downloading http://pypiserver.sinaapp.com/packages/an_example_pypi_project-0.0.5.zip
-Processing an_example_pypi_project-0.0.5.zip
-Running an_example_pypi_project-0.0.5/setup.py -q bdist_egg --dist-dir /tmp/easy_install-9cPbRY/an_example_pypi_project-0.0.5/egg-dist-tmp-19gZKR
-zip_safe flag not set; analyzing archive contents...
-Adding an-example-pypi-project 0.0.5 to easy-install.pth file
+  $ easy_install -i http://pypiserver.sinaapp.com/simple/ an_example_pypi_project
+  Searching for an-example-pypi-project
+  Reading http://pypiserver.sinaapp.com/simple/an_example_pypi_project/
+  Best match: an-example-pypi-project 0.0.5
+  Downloading http://pypiserver.sinaapp.com/packages/an_example_pypi_project-0.0.5.zip
+  Processing an_example_pypi_project-0.0.5.zip
+  Running an_example_pypi_project-0.0.5/setup.py -q bdist_egg --dist-dir /tmp/easy_install-9cPbRY/an_example_pypi_project-0.0.5/egg-dist-tmp-19gZKR
+  zip_safe flag not set; analyzing archive contents...
+  Adding an-example-pypi-project 0.0.5 to easy-install.pth file
+  
+  Installed /home/felix/lab/SAEENV/lib/python2.7/site-packages/an_example_pypi_project-0.0.5-py2.7.egg
+  Processing dependencies for an-example-pypi-project
+  Finished processing dependencies for an-example-pypi-project
 
-Installed /home/felix/lab/SAEENV/lib/python2.7/site-packages/an_example_pypi_project-0.0.5-py2.7.egg
-Processing dependencies for an-example-pypi-project
-Finished processing dependencies for an-example-pypi-project
-
-
-Source
-===========
-Source releases can be downloaded from
-http://pypi.python.org/pypi/pypiserver
-
-https://github.com/schmir/pypiserver carries a git repository of the
-in-development version.
-
-Use::
-
-  git clone https://github.com/schmir/pypiserver.git
-
-to create a copy of the repository, then::
-
-  git pull
-
-inside the copy to receive the latest version.
 
 
 Bugs
