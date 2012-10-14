@@ -13,20 +13,31 @@ pypiserver4sae - SAE based minimal PyPI server for use with pip/easy_install
 pypiserver is a minimal PyPI compatible server. It can be used to
 serve a set of packages and eggs to easy_install or pip.
 This fork of pypiserver is for Sina App Engine platform enviroment only, and use wsgi as interface. 
+You are able to setup a productive personal PyPI index in 5 mins.
 For more options, please check https://github.com/schmir/pypiserver .
+pypiserver 是最简化的PyPI 兼容服务器。它可以用来提供easy_install 或 pip 使用的packages 和 eggs服务。
+此分支版本专门为SAE（Sina App Engine）定制，可以通过wsgi接口运行在模拟环境和SAE上。
+你可以在5分钟内搭建生产级的个人PyPI索引服务。
+本地服务及更多其他方案请参考https://github.com/schmir/pypiserver .
 
 Installation on SAE
 ====================
-pypiserver will work with python 2.5, 2.6 and 2.7. Python 3 support
-has been added with version 0.4.0.
+使用SAE storage 服务作为存储方案，使用之前请启用 storage服务。
 
-Run the following commands to get your PyPI server up and running::
+pypiserver4sae on SAE using wsgi interface::
+  import os, sys
+  
+  sys.path.append(os.path.join(os.path.dirname(__file__), 'pypiserver').replace('\\','/'))
+  
+  import sae
+  from pypiserver import app
+  
+  domain = "main"   #replace the storage domain name
+  
+  application = sae.create_wsgi_app(app(root=domain,
+          redirect_to_fallback=True,
+          fallback_url="http://pypi.python.org/simple"))
 
-  pip install pypiserver
-  mkdir ~/packages
-  # copy some source packages or eggs to this directory
-  pypi-server -p 8080 ~/packages
-  pip install -i http://localhost:8080/simple/ ...
 
 Alternative Installation as standalone script
 =============================================
@@ -183,7 +194,7 @@ For more options, please check https://github.com/schmir/pypiserver .
 
 Test on SAE
 ===========
-
+Test my demo server on http://pypiserver.sinaapp.com/simple/ ::
   $ easy_install -i http://pypiserver.sinaapp.com/simple/ an_example_pypi_project
   Searching for an-example-pypi-project
   Reading http://pypiserver.sinaapp.com/simple/an_example_pypi_project/
