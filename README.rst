@@ -12,12 +12,19 @@ pypiserver4sae - SAE based minimal PyPI server for use with pip/easy_install
 
 pypiserver is a minimal PyPI compatible server. It can be used to
 serve a set of packages and eggs to easy_install or pip.
+
 This fork of pypiserver is for Sina App Engine platform enviroment only, and use wsgi as interface. 
+
 You are able to setup a productive personal PyPI index in 5 mins.
+
 For more options, please check https://github.com/schmir/pypiserver .
+
 pypiserver 是最简化的PyPI 兼容服务器。它可以用来提供easy_install 或 pip 使用的packages 和 eggs服务。
+
 此分支版本专门为SAE（Sina App Engine）定制，可以通过wsgi接口运行在模拟环境和SAE上。
+
 你可以在5分钟内搭建生产级的个人PyPI索引服务。
+
 本地服务及更多其他方案请参考https://github.com/schmir/pypiserver .
 
 Installation on SAE
@@ -25,6 +32,7 @@ Installation on SAE
 使用SAE storage 服务作为存储方案，使用之前请启用 storage服务。
 
 pypiserver4sae on SAE using wsgi interface::
+
   import os, sys
   
   sys.path.append(os.path.join(os.path.dirname(__file__), 'pypiserver').replace('\\','/'))
@@ -37,6 +45,25 @@ pypiserver4sae on SAE using wsgi interface::
   application = sae.create_wsgi_app(app(root=domain,
           redirect_to_fallback=True,
           fallback_url="http://pypi.python.org/simple"))
+
+
+Test on SAE
+===========
+Test my demo server on http://pypiserver.sinaapp.com/simple/ ::
+
+  $ easy_install -i http://pypiserver.sinaapp.com/simple/ an_example_pypi_project
+  Searching for an-example-pypi-project
+  Reading http://pypiserver.sinaapp.com/simple/an_example_pypi_project/
+  Best match: an-example-pypi-project 0.0.5
+  Downloading http://pypiserver.sinaapp.com/packages/an_example_pypi_project-0.0.5.zip
+  Processing an_example_pypi_project-0.0.5.zip
+  Running an_example_pypi_project-0.0.5/setup.py -q bdist_egg --dist-dir /tmp/easy_install-9cPbRY/an_example_pypi_project-0.0.5/egg-dist-tmp-19gZKR
+  zip_safe flag not set; analyzing archive contents...
+  Adding an-example-pypi-project 0.0.5 to easy-install.pth file
+  
+  Installed /home/felix/lab/SAEENV/lib/python2.7/site-packages/an_example_pypi_project-0.0.5-py2.7.egg
+  Processing dependencies for an-example-pypi-project
+  Finished processing dependencies for an-example-pypi-project
 
 
 Alternative Installation as standalone script
@@ -191,24 +218,6 @@ Optional dependencies
 Using a different WSGI server
 =============================
 For more options, please check https://github.com/schmir/pypiserver .
-
-Test on SAE
-===========
-Test my demo server on http://pypiserver.sinaapp.com/simple/ ::
-  $ easy_install -i http://pypiserver.sinaapp.com/simple/ an_example_pypi_project
-  Searching for an-example-pypi-project
-  Reading http://pypiserver.sinaapp.com/simple/an_example_pypi_project/
-  Best match: an-example-pypi-project 0.0.5
-  Downloading http://pypiserver.sinaapp.com/packages/an_example_pypi_project-0.0.5.zip
-  Processing an_example_pypi_project-0.0.5.zip
-  Running an_example_pypi_project-0.0.5/setup.py -q bdist_egg --dist-dir /tmp/easy_install-9cPbRY/an_example_pypi_project-0.0.5/egg-dist-tmp-19gZKR
-  zip_safe flag not set; analyzing archive contents...
-  Adding an-example-pypi-project 0.0.5 to easy-install.pth file
-  
-  Installed /home/felix/lab/SAEENV/lib/python2.7/site-packages/an_example_pypi_project-0.0.5-py2.7.egg
-  Processing dependencies for an-example-pypi-project
-  Finished processing dependencies for an-example-pypi-project
-
 
 
 Bugs
